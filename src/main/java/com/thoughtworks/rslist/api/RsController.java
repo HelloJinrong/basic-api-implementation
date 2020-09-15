@@ -50,9 +50,27 @@ public class RsController {
         rsList.remove(index-1);
     }
 
-    @PatchMapping("/rs/list")
-    public List<RsEvent> should_change_reEvent(@RequestParam int id, @RequestParam String keyWord) {
-        rsList.get(id-1).setKeyWord(keyWord);
-        return rsList;
+    @PostMapping("/rs/{index}")
+    public void should_change(@PathVariable int index, @RequestBody String reString) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        RsEvent rsEvent = objectMapper.readValue(reString, RsEvent.class);
+        RsEvent replaceRsEvent = rsList.get(index-1);
+        if(rsEvent.getEventName()==null) {
+            if(rsEvent.getKeyWord()==null) {
+                return;
+            }
+            else {
+                replaceRsEvent.setKeyWord(rsEvent.getKeyWord());
+            }
+        }
+        else {
+            replaceRsEvent.setEventName(rsEvent.getEventName());
+            if(rsEvent.getKeyWord()==null) {
+                return;
+            }
+            else {
+                replaceRsEvent.setKeyWord(rsEvent.getKeyWord());
+            }
+        }
     }
 }
