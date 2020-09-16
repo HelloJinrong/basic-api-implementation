@@ -144,11 +144,11 @@ class RsListApplicationTests {
     @Test
     public void should_show_all_users() throws Exception {
         mockMvc.perform(get("/users"))
-                .andExpect(jsonPath("$[0].name", is("hjr")))
-                .andExpect(jsonPath("$[0].gender", is("female")))
-                .andExpect(jsonPath("$[0].email", is("a@b.com")))
-                .andExpect(jsonPath("$[0].phone", is("12345678901")))
-                .andExpect(jsonPath("$[0].age", is(20)));
+                .andExpect(jsonPath("$[0].user_name", is("hjr")))
+                .andExpect(jsonPath("$[0].user_gender", is("female")))
+                .andExpect(jsonPath("$[0].user_email", is("a@b.com")))
+                .andExpect(jsonPath("$[0].user_phone", is("12345678901")))
+                .andExpect(jsonPath("$[0].user_age", is(20)));
     }
 
     @Test

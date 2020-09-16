@@ -102,10 +102,8 @@ public class RsController {
 
     @GetMapping("/users")
     public ResponseEntity get_user_regular() {
-        int length = userList.size();
-        User[] myUserList = new User[length];
-        userList.toArray(myUserList);
-        return ResponseEntity.ok(myUserList);
+
+        return ResponseEntity.ok(userList);
     }
 
 }
