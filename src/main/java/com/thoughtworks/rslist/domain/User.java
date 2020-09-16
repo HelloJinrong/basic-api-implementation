@@ -18,6 +18,7 @@ public class User {
     private String phone;
     private int voteNum=10;
 
+    public User(){}
     public User(String name, String gender, int age, String email, String phone) {
         this.name = name;
         this.gender = gender;

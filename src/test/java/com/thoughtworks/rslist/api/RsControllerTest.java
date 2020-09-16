@@ -1,5 +1,6 @@
 package com.thoughtworks.rslist.api;
 
+import com.thoughtworks.rslist.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,6 +29,7 @@ class RsListApplicationTests {
     MockMvc mockMvc;
 
     @Test
+    @Order(1)
     void get_contextLoads() throws Exception {
         mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
@@ -40,6 +42,7 @@ class RsListApplicationTests {
     }
 
     @Test
+    @Order(2)
     void should_get_index_list() throws Exception {
         mockMvc.perform(get("/rs/1"))
                 .andExpect(jsonPath("$.eventName", is("第一条事件")))
@@ -57,7 +60,7 @@ class RsListApplicationTests {
     }
 
     @Test
-
+    @Order(3)
     void get_list_between() throws Exception {
         mockMvc.perform(get("/rs/list?start=1&end=2"))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
@@ -82,14 +85,15 @@ class RsListApplicationTests {
     }
 
     @Test
-
+    @Order(4)
     public void should_add_new_rsevent() throws Exception {
         //String jsonString = "{\"eventName\":\"猪肉涨价啦\", \"keyWord\":\"经济\"}";
         ObjectMapper objectMapper = new ObjectMapper();
-        RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济");
+        User user = new User("annie","female",20,"a@b.com","17777777777");
+        RsEvent rsEvent = new RsEvent("猪肉涨价啦", "经济", user);
         String jsonString = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/event").content(jsonString).contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(4)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyWord", is("无标签")))
@@ -103,7 +107,7 @@ class RsListApplicationTests {
     }
 
     @Test
-
+    @Order(5)
     public void should_delete_rsEvent() throws Exception {
         mockMvc.perform(delete("/rs/1"))
                 .andExpect(status().isOk());
@@ -114,8 +118,9 @@ class RsListApplicationTests {
 
     @Test
     public void should_change_rslist() throws Exception {
-        RsEvent rsEvent = new RsEvent("修改事件",null);
         ObjectMapper objectMapper = new ObjectMapper();
+        User user = new User("annie","female",20,"a@b.com","17777777777");
+        RsEvent rsEvent = new RsEvent("修改事件",null,user);
         String changeJson = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/2").content(changeJson)
                 .contentType(MediaType.APPLICATION_JSON))
