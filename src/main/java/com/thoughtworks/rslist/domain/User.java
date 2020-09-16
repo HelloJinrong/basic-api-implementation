@@ -18,13 +18,12 @@ public class User {
     private String phone;
     private int voteNum=10;
 
-    public User(String name, String gender, int age, String email, String phone, int voteNum) {
+    public User(String name, String gender, int age, String email, String phone) {
         this.name = name;
         this.gender = gender;
         this.age = age;
         this.email = email;
         this.phone = phone;
-        this.voteNum = voteNum;
     }
 
     public String getName() {

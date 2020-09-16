@@ -31,19 +31,65 @@ class UserControllerTest {
     @Test
     @Order(1)
     public void should_register_user() throws Exception {
-        mockMvc.perform(post("/user")).andExpect(status().isOk());
+        User user = new User("hjr","female",20,"a@b.com","12345678901");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
         mockMvc.perform(get("/user"))
                 .andExpect(jsonPath("$",hasSize(1)))
                 .andExpect(jsonPath("$[0].name",is("hjr")))
                 .andExpect(jsonPath("$[0].gender",is("female")))
-                .andExpect(jsonPath("$[0].age",is("18")))
-                .andExpect(jsonPath("$[0].email",is("12@j.com")))
-                .andExpect(jsonPath("$[0].phone",is("19999999999")))
+                .andExpect(jsonPath("$[0].age",is(20)))
+                .andExpect(jsonPath("$[0].email",is("a@b.com")))
+                .andExpect(jsonPath("$[0].phone",is("12345678901")))
                 .andExpect(status().isOk());
     }
 
     @Test
-    public void name_should_less_than8(){
-        User user=new User("hjr","female","18","12@j.com","19999999999");
+    public void should_register_user_name_less_8() throws Exception {
+        User user = new User("ann123456","female",20,"a@b.com","12345678675");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void should_register_user_gender_notNull() throws Exception {
+        User user = new User("ann",null,20,"a@b.com","12345678675");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void should_register_user_age_more_then_18() throws Exception {
+        User user = new User("ann","female",10,"a@b.com","12345678675");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void should_register_user_email_regular() throws Exception {
+        User user = new User("ann","female",20,"ab.com","12345678675");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void should_register_user_phone_regular() throws Exception {
+        User user = new User("ann","female",20,"a@b.com","1234567867");
+        ObjectMapper objectMapper = new ObjectMapper();
+        String jsonString = objectMapper.writeValueAsString(user);
+        mockMvc.perform(post("/user").content(jsonString).contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }
+
+
