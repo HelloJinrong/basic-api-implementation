@@ -22,6 +22,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
@@ -35,14 +36,16 @@ class RsListApplicationTests {
         mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyWord", is("无标签")))
-                //.andExpect(jsonPath("$[0]",not(hasKey("user"))))
+               // .andExpect(jsonPath("$[0]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
                 .andExpect(jsonPath("$[1].keyWord", is("无标签")))
-                //.andExpect(jsonPath("$[1]",not(hasKey("user"))))
+             //   .andExpect(jsonPath("$[0]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                //.andExpect(jsonPath("$[2]",not(hasKey("user"))))
+                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
+               // .andExpect(jsonPath("$[0]",not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
+
 
     @Test
     @Order(2)
@@ -141,11 +144,11 @@ class RsListApplicationTests {
     @Test
     public void should_show_all_users() throws Exception {
         mockMvc.perform(get("/users"))
-                .andExpect(jsonPath("$[0].user_name", is("hjr")))
-                .andExpect(jsonPath("$[0].user_gender", is("female")))
-                .andExpect(jsonPath("$[0].user_email", is("a@b.com")))
-                .andExpect(jsonPath("$[0].user_phone", is("12345678901")))
-                .andExpect(jsonPath("$[0].user_age", is(20)));
+                .andExpect(jsonPath("$[0].name", is("hjr")))
+                .andExpect(jsonPath("$[0].gender", is("female")))
+                .andExpect(jsonPath("$[0].email", is("a@b.com")))
+                .andExpect(jsonPath("$[0].phone", is("12345678901")))
+                .andExpect(jsonPath("$[0].age", is(20)));
     }
 
 
