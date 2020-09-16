@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static com.thoughtworks.rslist.domain.UserList.userList;
@@ -63,13 +62,13 @@ public class RsController {
     }
 
     @DeleteMapping("/rs/{index}")
-    public void should_delete_rsEvent(@PathVariable int index) {
+    public ResponseEntity should_delete_rsEvent(@PathVariable int index) {
         //System.out.println("delete"+index);
-        rsList.remove(index-1);
+        return ResponseEntity.created(null).build();
     }
 
     @PostMapping("/rs/{index}")
-    public void should_change(@PathVariable int index, @RequestBody String reString) throws JsonProcessingException {
+    public ResponseEntity should_change(@PathVariable int index, @RequestBody String reString) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         RsEvent rsEvent = objectMapper.readValue(reString, RsEvent.class);
         RsEvent replaceRsEvent = rsList.get(index-1);
@@ -80,6 +79,15 @@ public class RsController {
         if(rsEvent.getKeyWord()!=null) {
             replaceRsEvent.setKeyWord(rsEvent.getKeyWord());
         }
+        return ResponseEntity.created(null).build();
+    }
 
+
+    @GetMapping("/users")
+    public ResponseEntity get_user_regular() {
+        int length = userList.size();
+        User[] myUserList = new User[length];
+        userList.toArray(myUserList);
+        return ResponseEntity.ok(myUserList);
     }
 }

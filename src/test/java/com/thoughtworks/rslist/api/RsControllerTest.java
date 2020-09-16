@@ -1,6 +1,8 @@
 package com.thoughtworks.rslist.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thoughtworks.rslist.domain.User;
+import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,11 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import javax.xml.ws.Dispatch;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static com.fasterxml.jackson.databind.MapperFeature.USE_ANNOTATIONS;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,10 +35,12 @@ class RsListApplicationTests {
         mockMvc.perform(get("/rs/list")).andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyWord", is("无标签")))
+                //.andExpect(jsonPath("$[0]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[1].eventName", is("第二条事件")))
                 .andExpect(jsonPath("$[1].keyWord", is("无标签")))
+                //.andExpect(jsonPath("$[1]",not(hasKey("user"))))
                 .andExpect(jsonPath("$[2].eventName", is("第三条事件")))
-                .andExpect(jsonPath("$[2].keyWord", is("无标签")))
+                //.andExpect(jsonPath("$[2]",not(hasKey("user"))))
                 .andExpect(status().isOk());
     }
 
@@ -110,7 +113,7 @@ class RsListApplicationTests {
     @Order(5)
     public void should_delete_rsEvent() throws Exception {
         mockMvc.perform(delete("/rs/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$[0].eventName", is("第二条事件")))
                 .andExpect(status().isOk());
@@ -124,7 +127,7 @@ class RsListApplicationTests {
         String changeJson = objectMapper.writeValueAsString(rsEvent);
         mockMvc.perform(post("/rs/2").content(changeJson)
                 .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
         mockMvc.perform(get("/rs/list"))
                 .andExpect(jsonPath("$[0].eventName", is("第一条事件")))
                 .andExpect(jsonPath("$[0].keyWord", is("无标签")))
@@ -134,5 +137,17 @@ class RsListApplicationTests {
                 .andExpect(jsonPath("$[2].keyWord", is("无标签")))
                 .andExpect(status().isOk());
     }
+
+    @Test
+    public void should_show_all_users() throws Exception {
+        mockMvc.perform(get("/users"))
+                .andExpect(jsonPath("$[0].user_name", is("hjr")))
+                .andExpect(jsonPath("$[0].user_gender", is("female")))
+                .andExpect(jsonPath("$[0].user_email", is("a@b.com")))
+                .andExpect(jsonPath("$[0].user_phone", is("12345678901")))
+                .andExpect(jsonPath("$[0].user_age", is(20)));
+    }
+
+
 
 }
