@@ -7,8 +7,7 @@ public class RsEventNotValidException extends RuntimeException{
         this.errorMessage = errorMessage;
     }
 
-    @Override
-    public String getMessage() {
+    public String getErrorMessage() {
         return errorMessage;
     }
 }
