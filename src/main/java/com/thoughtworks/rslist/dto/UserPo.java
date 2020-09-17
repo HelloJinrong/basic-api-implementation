@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDto {
+public class UserPo {
     @Id
     @GeneratedValue
     private int id;
@@ -26,7 +26,7 @@ public class UserDto {
     private String phone;
     private int voteNum = 10;
 
-    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userDto")
-    private List<RsEventDto> rsEventDtos;
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "userPo")
+    private List<RsEventPo> rsEventPos;
 
 }

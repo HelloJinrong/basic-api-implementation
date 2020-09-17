@@ -1,16 +1,14 @@
 package com.thoughtworks.rslist.respository;
 
-import com.thoughtworks.rslist.dto.RsEventDto;
+import com.thoughtworks.rslist.dto.RsEventPo;
 import org.springframework.data.repository.CrudRepository;
 
-import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
-public interface RsEventRepository extends CrudRepository<RsEventDto, Integer> {
+public interface RsEventRepository extends CrudRepository<RsEventPo, Integer> {
 
     @Override
-    List<RsEventDto> findAll();
+    List<RsEventPo> findAll();
 
 
 }

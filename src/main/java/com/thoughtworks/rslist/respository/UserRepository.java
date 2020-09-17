@@ -1,11 +1,11 @@
 package com.thoughtworks.rslist.respository;
 
-import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.dto.UserPo;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface UserRepository extends CrudRepository<UserDto, Integer> {
+public interface UserRepository extends CrudRepository<UserPo, Integer> {
     @Override
-    List<UserDto> findAll();
+    List<UserPo> findAll();
 }

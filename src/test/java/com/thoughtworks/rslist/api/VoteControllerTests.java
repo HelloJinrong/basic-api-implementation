@@ -1,8 +1,8 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.dto.RsEventDto;
-import com.thoughtworks.rslist.dto.UserDto;
-import com.thoughtworks.rslist.dto.VoteDto;
+import com.thoughtworks.rslist.dto.RsEventPo;
+import com.thoughtworks.rslist.dto.UserPo;
+import com.thoughtworks.rslist.dto.VotePo;
 import com.thoughtworks.rslist.respository.RsEventRepository;
 import com.thoughtworks.rslist.respository.UserRepository;
 import com.thoughtworks.rslist.respository.VoteRepository;
@@ -34,19 +34,19 @@ public class VoteControllerTests {
     @Autowired
     VoteRepository voteRepository;
 
-    UserDto userDto;
-    RsEventDto rsEventDto;
-    VoteDto voteDto;
+    UserPo userPo;
+    RsEventPo rsEventPo;
+    VotePo votePo;
 
     @BeforeEach
     void setUp() {
-        userDto = userRepository.save(UserDto.builder().email("a@b.com").age(19).gender("female")
+        userPo = userRepository.save(UserPo.builder().email("a@b.com").age(19).gender("female")
                 .phone("18888888888").userName("ann").voteNum(10).build());
-        rsEventDto = rsEventRepository.save(RsEventDto.builder().eventName("猪肉")
-                .keyword("经济").userDto(userDto).voteNum(0).build());
-        voteDto = VoteDto.builder().rsEvent(rsEventDto).voteNum(5).user(userDto)
+        rsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("猪肉")
+                .keyword("经济").userPo(userPo).voteNum(0).build());
+        votePo = VotePo.builder().rsEvent(rsEventPo).voteNum(5).user(userPo)
                 .localDateTime(LocalDateTime.now()).build();
-        voteRepository.save(voteDto);
+        voteRepository.save(votePo);
     }
 
     @AfterEach
@@ -59,11 +59,11 @@ public class VoteControllerTests {
     @Test
     public void should_get_vote_record() throws Exception {
         mockMvc.perform(get("/voteRecord")
-                .param("userId", String.valueOf(userDto.getId()))
-                .param("rsEventId", String.valueOf(rsEventDto.getId())))
+                .param("userId", String.valueOf(userPo.getId()))
+                .param("rsEventId", String.valueOf(rsEventPo.getId())))
                 .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].userId", is(userDto.getId())))
-                .andExpect(jsonPath("$[0].rsEventId", is(rsEventDto.getId())))
+                .andExpect(jsonPath("$[0].userId", is(userPo.getId())))
+                .andExpect(jsonPath("$[0].rsEventId", is(rsEventPo.getId())))
                 .andExpect(jsonPath("$[0].voteNum", is(5)));
 
     }

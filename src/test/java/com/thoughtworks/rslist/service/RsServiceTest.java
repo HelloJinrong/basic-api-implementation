@@ -1,10 +1,9 @@
 package com.thoughtworks.rslist.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.rslist.domain.Vote;
-import com.thoughtworks.rslist.dto.RsEventDto;
-import com.thoughtworks.rslist.dto.UserDto;
-import com.thoughtworks.rslist.dto.VoteDto;
+import com.thoughtworks.rslist.dto.RsEventPo;
+import com.thoughtworks.rslist.dto.UserPo;
+import com.thoughtworks.rslist.dto.VotePo;
 import com.thoughtworks.rslist.respository.RsEventRepository;
 import com.thoughtworks.rslist.respository.UserRepository;
 import com.thoughtworks.rslist.respository.VoteRepository;
@@ -47,7 +46,7 @@ class RsServiceTest {
                 .userId(1)
                 .rsEventId(2)
                 .build();
-        UserDto userDto = UserDto.builder()
+        UserPo userPo = UserPo.builder()
                 .userName("xzq")
                 .age(25)
                 .email("a@b.com")
@@ -55,28 +54,28 @@ class RsServiceTest {
                 .phone("12345678987")
                 .voteNum(4)
                 .build();
-        RsEventDto rsEventDto = RsEventDto.builder()
-                .userDto(userDto)
+        RsEventPo rsEventPo = RsEventPo.builder()
+                .userPo(userPo)
                 .eventName("eventName")
                 .keyword("keyword")
                 .voteNum(1)
                 .id(1)
                 .build();
-        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(userDto));
+        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventPo));
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(userPo));
 
         rsService.vote(vote, 1);
 
-        verify(voteRepository).save(VoteDto.builder()
-        .user(userDto)
-        .rsEvent(rsEventDto)
+        verify(voteRepository).save(VotePo.builder()
+        .user(userPo)
+        .rsEvent(rsEventPo)
         .localDateTime(localDateTime)
         .voteNum(2)
         .build());
-        verify(rsEventRepository).save(rsEventDto);
-        verify(userRepository).save(userDto);
-        assertEquals(userDto.getVoteNum(),2);
-        assertEquals(rsEventDto.getVoteNum(), 3);
+        verify(rsEventRepository).save(rsEventPo);
+        verify(userRepository).save(userPo);
+        assertEquals(userPo.getVoteNum(),2);
+        assertEquals(rsEventPo.getVoteNum(), 3);
     }
 
     @Test
@@ -87,7 +86,7 @@ class RsServiceTest {
                 .userId(1)
                 .rsEventId(2)
                 .build();
-        UserDto userDto = UserDto.builder()
+        UserPo userPo = UserPo.builder()
                 .userName("xzq")
                 .age(25)
                 .email("a@b.com")
@@ -95,14 +94,14 @@ class RsServiceTest {
                 .phone("12345678987")
                 .voteNum(4)
                 .build();
-        RsEventDto rsEventDto = RsEventDto.builder()
-                .userDto(userDto)
+        RsEventPo rsEventPo = RsEventPo.builder()
+                .userPo(userPo)
                 .eventName("eventName")
                 .keyword("keyword")
                 .voteNum(1)
                 .build();
-        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(userDto));
+        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventPo));
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(userPo));
 
         assertThrows(RuntimeException.class, () -> rsService.vote(vote, 1));
     }
@@ -115,7 +114,7 @@ class RsServiceTest {
                 .userId(1)
                 .rsEventId(2)
                 .build();
-        UserDto userDto = UserDto.builder()
+        UserPo userPo = UserPo.builder()
                 .userName("xzq")
                 .age(25)
                 .email("a@b.com")
@@ -123,15 +122,15 @@ class RsServiceTest {
                 .phone("12345678987")
                 .voteNum(4)
                 .build();
-        RsEventDto rsEventDto = RsEventDto.builder()
-                .userDto(userDto)
+        RsEventPo rsEventPo = RsEventPo.builder()
+                .userPo(userPo)
                 .eventName("eventName")
                 .keyword("keyword")
                 .voteNum(1)
                 .id(1)
                 .build();
         when(rsEventRepository.findById(anyInt())).thenReturn(Optional.empty());
-        when(userRepository.findById(anyInt())).thenReturn(Optional.of(userDto));
+        when(userRepository.findById(anyInt())).thenReturn(Optional.of(userPo));
 
         assertThrows(RuntimeException.class, () -> rsService.vote(vote, 1));
     }
@@ -144,7 +143,7 @@ class RsServiceTest {
                 .userId(1)
                 .rsEventId(2)
                 .build();
-        UserDto userDto = UserDto.builder()
+        UserPo userPo = UserPo.builder()
                 .userName("xzq")
                 .age(25)
                 .email("a@b.com")
@@ -153,14 +152,14 @@ class RsServiceTest {
                 .voteNum(4)
                 .id(1)
                 .build();
-        RsEventDto rsEventDto = RsEventDto.builder()
-                .userDto(userDto)
+        RsEventPo rsEventPo = RsEventPo.builder()
+                .userPo(userPo)
                 .eventName("eventName")
                 .keyword("keyword")
                 .voteNum(1)
                 .id(1)
                 .build();
-        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventDto));
+        when(rsEventRepository.findById(anyInt())).thenReturn(Optional.of(rsEventPo));
         when(userRepository.findById(anyInt())).thenReturn(Optional.empty());
 
         assertThrows(RuntimeException.class, () -> rsService.vote(vote, 1));
