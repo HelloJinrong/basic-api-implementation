@@ -22,7 +22,8 @@ public class RsEventPo {
     private String keyword;
     private int voteNum;
 
-    @JsonIgnore
+
     @ManyToOne
+    @JsonIgnore
     private UserPo userPo;
 }

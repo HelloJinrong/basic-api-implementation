@@ -41,9 +41,9 @@ public class VoteControllerTests {
     @BeforeEach
     void setUp() {
         userPo = userRepository.save(UserPo.builder().email("a@b.com").age(19).gender("female")
-                .phone("18888888888").userName("ann").voteNum(10).build());
-        rsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("猪肉")
-                .keyword("经济").userPo(userPo).voteNum(0).build());
+                .phone("18888888888").userName("hjr").voteNum(10).build());
+        rsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("hava money")
+                .keyword("wish").userPo(userPo).voteNum(0).build());
         votePo = VotePo.builder().rsEvent(rsEventPo).voteNum(5).user(userPo)
                 .localDateTime(LocalDateTime.now()).build();
         voteRepository.save(votePo);

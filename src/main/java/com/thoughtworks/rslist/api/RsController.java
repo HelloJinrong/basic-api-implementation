@@ -25,17 +25,17 @@ public class RsController {
   @Autowired
   UserRepository userRepository;
 
-    public RsController() throws SQLException {
+    public RsController()  {
     }
 
 
   @GetMapping("/rs/{rsEventId}")
     public ResponseEntity get_index_list(@PathVariable  int rsEventId) {
-      Optional<RsEventPo> rsEventDto = rsEventRepository.findById(rsEventId);
-      if (!rsEventDto.isPresent()) {
+      Optional<RsEventPo> rsEventPo = rsEventRepository.findById(rsEventId);
+      if (!rsEventPo.isPresent()) {
         throw new RsEventNotValidException("invalid rsEventId");
       }
-      return ResponseEntity.ok(rsEventDto.get());
+      return ResponseEntity.ok(rsEventPo.get());
   }
 
   @GetMapping("/rsEvent")
