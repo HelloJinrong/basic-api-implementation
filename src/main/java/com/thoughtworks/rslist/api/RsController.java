@@ -1,7 +1,7 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.dto.RsEventPo;
-import com.thoughtworks.rslist.dto.UserPo;
+import com.thoughtworks.rslist.Po.RsEventPo;
+import com.thoughtworks.rslist.Po.UserPo;
 import com.thoughtworks.rslist.respository.RsEventRepository;
 import com.thoughtworks.rslist.respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.sql.*;
 import java.util.Optional;
 
 @RestController

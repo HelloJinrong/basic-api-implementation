@@ -1,7 +1,7 @@
 package com.thoughtworks.rslist.api;
 
 import com.thoughtworks.rslist.domain.User;
-import com.thoughtworks.rslist.dto.UserPo;
+import com.thoughtworks.rslist.Po.UserPo;
 import com.thoughtworks.rslist.respository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

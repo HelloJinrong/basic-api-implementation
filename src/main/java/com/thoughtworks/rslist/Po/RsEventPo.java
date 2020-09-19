@@ -1,4 +1,4 @@
-package com.thoughtworks.rslist.dto;
+package com.thoughtworks.rslist.Po;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

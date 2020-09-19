@@ -1,7 +1,7 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.dto.RsEventPo;
-import com.thoughtworks.rslist.dto.UserPo;
+import com.thoughtworks.rslist.Po.RsEventPo;
+import com.thoughtworks.rslist.Po.UserPo;
 import com.thoughtworks.rslist.respository.RsEventRepository;
 import com.thoughtworks.rslist.respository.UserRepository;
 import org.junit.jupiter.api.Test;

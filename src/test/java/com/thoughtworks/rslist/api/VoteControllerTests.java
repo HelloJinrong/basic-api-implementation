@@ -1,8 +1,8 @@
 package com.thoughtworks.rslist.api;
 
-import com.thoughtworks.rslist.dto.RsEventPo;
-import com.thoughtworks.rslist.dto.UserPo;
-import com.thoughtworks.rslist.dto.VotePo;
+import com.thoughtworks.rslist.Po.RsEventPo;
+import com.thoughtworks.rslist.Po.UserPo;
+import com.thoughtworks.rslist.Po.VotePo;
 import com.thoughtworks.rslist.respository.RsEventRepository;
 import com.thoughtworks.rslist.respository.UserRepository;
 import com.thoughtworks.rslist.respository.VoteRepository;
@@ -40,23 +40,21 @@ public class VoteControllerTests {
 
     @BeforeEach
     void setUp() {
+        voteRepository.deleteAll();
+        rsEventRepository.deleteAll();
+        userRepository.deleteAll();
         userPo = userRepository.save(UserPo.builder().email("a@b.com").age(19).gender("female")
                 .phone("18888888888").userName("hjr").voteNum(10).build());
         rsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("hava money")
                 .keyword("wish").userPo(userPo).voteNum(0).build());
-        votePo = VotePo.builder().rsEvent(rsEventPo).voteNum(5).user(userPo)
-                .localDateTime(LocalDateTime.now()).build();
-        voteRepository.save(votePo);
     }
 
     @AfterEach
     void tearDown() {
-        voteRepository.deleteAll();
-        rsEventRepository.deleteAll();
-        userRepository.deleteAll();
+
     }
 
-    @Test
+    /*@Test
     public void should_get_vote_record() throws Exception {
         mockMvc.perform(get("/voteRecord")
                 .param("userId", String.valueOf(userPo.getId()))
@@ -66,6 +64,40 @@ public class VoteControllerTests {
                 .andExpect(jsonPath("$[0].rsEventId", is(rsEventPo.getId())))
                 .andExpect(jsonPath("$[0].voteNum", is(5)));
 
+    }*/
+
+    @Test
+    public void should_get_vote_record() throws Exception{
+        for(int i=0;i<8;i++)
+        {
+            votePo = VotePo.builder().rsEvent(rsEventPo).voteNum(i+1).user(userPo)
+                    .localDateTime(LocalDateTime.now()).build();
+            voteRepository.save(votePo);
+        }
+
+        mockMvc.perform(get("/voteRecord")
+                .param("userId", String.valueOf(userPo.getId()))
+                .param("rsEventId", String.valueOf(rsEventPo.getId()))
+                .param("pageIndex", "1"))
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].userId", is(userPo.getId())))
+                .andExpect(jsonPath("$[0].rsEventId", is(rsEventPo.getId())))
+                .andExpect(jsonPath("$[0].voteNum", is(1)))
+                .andExpect(jsonPath("$[1].voteNum", is(2)))
+                .andExpect(jsonPath("$[2].voteNum", is(3)))
+                .andExpect(jsonPath("$[3].voteNum", is(4)))
+                .andExpect(jsonPath("$[4].voteNum", is(5)));
+
+        mockMvc.perform(get("/voteRecord")
+                .param("userId", String.valueOf(userPo.getId()))
+                .param("rsEventId", String.valueOf(rsEventPo.getId()))
+                .param("pageIndex", "2"))
+                .andExpect(jsonPath("$", hasSize(3)))
+                .andExpect(jsonPath("$[0].userId", is(userPo.getId())))
+                .andExpect(jsonPath("$[0].rsEventId", is(rsEventPo.getId())))
+                .andExpect(jsonPath("$[0].voteNum", is(6)))
+                .andExpect(jsonPath("$[1].voteNum", is(7)))
+                .andExpect(jsonPath("$[2].voteNum", is(8)));
     }
 
 
