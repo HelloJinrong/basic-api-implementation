@@ -19,14 +19,16 @@ import java.util.Optional;
 @RestController
 public class RsController {
 
-  @Autowired
+ // @Autowired
   RsEventRepository rsEventRepository;
-  @Autowired
+  //@Autowired
   UserRepository userRepository;
 
-    public RsController()  {
-    }
+  public RsController( RsEventRepository rsEventRepository, UserRepository userRepository) {
+    this.rsEventRepository = rsEventRepository;
+    this.userRepository = userRepository;
 
+  }
 
   @GetMapping("/rs/{rsEventId}")
     public ResponseEntity get_index_list(@PathVariable  int rsEventId) {

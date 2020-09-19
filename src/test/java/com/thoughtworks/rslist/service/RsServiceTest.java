@@ -1,9 +1,9 @@
 package com.thoughtworks.rslist.service;
 
-import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.Po.RsEventPo;
 import com.thoughtworks.rslist.Po.UserPo;
 import com.thoughtworks.rslist.Po.VotePo;
+import com.thoughtworks.rslist.domain.Vote;
 import com.thoughtworks.rslist.respository.RsEventRepository;
 import com.thoughtworks.rslist.respository.UserRepository;
 import com.thoughtworks.rslist.respository.VoteRepository;
