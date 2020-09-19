@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface VoteRepository extends PagingAndSortingRepository<VotePo, Integer> {
@@ -13,4 +14,6 @@ public interface VoteRepository extends PagingAndSortingRepository<VotePo, Integ
 
     @Query("select v from VotePo v where v.user.id = :userId and v.rsEvent.id = :rsEventId")
     List<VotePo> findAcoordingToUserIdAndRsEventId(int userId, int rsEventId, Pageable pageble);
+
+
 }

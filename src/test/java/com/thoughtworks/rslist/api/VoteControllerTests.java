@@ -15,11 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -37,6 +39,7 @@ public class VoteControllerTests {
     UserPo userPo;
     RsEventPo rsEventPo;
     VotePo votePo;
+    LocalDateTime localDateTime;
 
     @BeforeEach
     void setUp() {
@@ -47,6 +50,7 @@ public class VoteControllerTests {
                 .phone("18888888888").userName("hjr").voteNum(10).build());
         rsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("hava money")
                 .keyword("wish").userPo(userPo).voteNum(0).build());
+        localDateTime = LocalDateTime.of(2020,9,19,0,0,0);
     }
 
     @AfterEach
@@ -98,6 +102,37 @@ public class VoteControllerTests {
                 .andExpect(jsonPath("$[0].voteNum", is(6)))
                 .andExpect(jsonPath("$[1].voteNum", is(7)))
                 .andExpect(jsonPath("$[2].voteNum", is(8)));
+    }
+
+    @Test
+    public void should_get_voteRecord_between_days() throws Exception {
+        for(int i=0;i<8;i++)
+        {
+           localDateTime = localDateTime.plusDays(1);
+            votePo = VotePo.builder().rsEvent(rsEventPo).voteNum(i+1).user(userPo)
+                    .localDateTime(localDateTime).build();
+            voteRepository.save(votePo);
+        }
+        LocalDateTime startTime = LocalDateTime.of(2020,9,1,0,0,0);
+        LocalDateTime endTime = LocalDateTime.of(2020,10,1,0,0,0);
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        mockMvc.perform(get("/voteRecord/time")
+                .param("startTimeString", df.format(startTime))
+                .param("endTimeString", df.format(endTime)))
+                .andExpect(jsonPath("$",hasSize(8)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void should_get_null_voteRecord_between_days() throws Exception {
+        LocalDateTime startTime = LocalDateTime.of(2020,7,1,0,0,0);
+        LocalDateTime endTime = LocalDateTime.of(2020,8,1,0,0,0);
+        DateTimeFormatter df = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        mockMvc.perform(get("/voteRecord/time")
+                .param("startTimeString", df.format(startTime))
+                .param("endTimeString", df.format(endTime)))
+                .andExpect(jsonPath("$",hasSize(0)))
+                .andExpect(status().isOk());
     }
 
 
