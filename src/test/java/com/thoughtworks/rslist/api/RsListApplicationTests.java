@@ -1,12 +1,9 @@
 package com.thoughtworks.rslist.api;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.thoughtworks.rslist.domain.User;
-import com.thoughtworks.rslist.dto.RsEventDto;
-import com.thoughtworks.rslist.dto.UserDto;
+import com.thoughtworks.rslist.Po.RsEventPo;
+import com.thoughtworks.rslist.Po.UserPo;
 import com.thoughtworks.rslist.respository.RsEventRepository;
 import com.thoughtworks.rslist.respository.UserRepository;
-import jdk.nashorn.internal.ir.annotations.Ignore;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,26 +11,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.thoughtworks.rslist.api.RsController;
-import com.thoughtworks.rslist.domain.RsEvent;
 import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
-import javax.xml.ws.Dispatch;
-
-import java.util.List;
-import java.util.Optional;
-
-import static com.fasterxml.jackson.databind.MapperFeature.USE_ANNOTATIONS;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -51,16 +34,18 @@ class RsListApplicationTests {
     @Autowired
     RsEventRepository rsEventRepository;
 
-    UserDto userDto;
-    RsEventDto rsEventDto;
+    UserPo userPo;
+    RsEventPo rsEventPo;
     ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp() {
-        userDto = userRepository.save(UserDto.builder().email("a@b.com").age(19).gender("female")
-                .phone("18888888888").userName("ann").voteNum(10).build());
-        rsEventDto = rsEventRepository.save(RsEventDto.builder().eventName("猪肉")
-                .keyword("经济").userDto(userDto).voteNum(0).build());
+        rsEventRepository.deleteAll();
+        userRepository.deleteAll();
+        userPo = userRepository.save(UserPo.builder().email("a@b.com").age(19).gender("female")
+                .phone("18888888888").userName("hehe").voteNum(10).build());
+        rsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("have money")
+                .keyword("economy").userPo(userPo).voteNum(0).build());
         objectMapper = new ObjectMapper();
 
     }
@@ -69,21 +54,21 @@ class RsListApplicationTests {
     @Order(1)
     void should_get_rsEvent() throws Exception {
         mockMvc.perform(get("/rsEvent"))
-                .andExpect(jsonPath("$[0].eventName", is("猪肉")))
-                .andExpect(jsonPath("$[0].keyword", is("经济")))
+                .andExpect(jsonPath("$[0].eventName", is("have money")))
+                .andExpect(jsonPath("$[0].keyword", is("economy")))
                 .andExpect(jsonPath("$[0].voteNum", is(0)))
-                .andExpect(jsonPath("$[0]", not(hasKey("userDto"))))
+                .andExpect(jsonPath("$[0]", not(hasKey("userPo"))))
                 .andExpect(status().isOk());
     }
 
     @Test
     @Order(2)
     void should_get_rsEvent_by_rsEventId() throws Exception {
-        mockMvc.perform(get("/rs/{rsEventId}", String.valueOf(rsEventDto.getId())))
-                .andExpect(jsonPath("$.eventName", is("猪肉")))
-                .andExpect(jsonPath("$.keyword", is("经济")))
+        mockMvc.perform(get("/rs/{rsEventId}", String.valueOf(rsEventPo.getId())))
+                .andExpect(jsonPath("$.eventName", is("have money")))
+                .andExpect(jsonPath("$.keyword", is("economy")))
                 .andExpect(jsonPath("$.voteNum", is(0)))
-                .andExpect(jsonPath("$", not(hasKey("userDto"))))
+                .andExpect(jsonPath("$", not(hasKey("userPo"))))
                 .andExpect(status().isOk());
     }
 
@@ -98,7 +83,7 @@ class RsListApplicationTests {
 
     @Test
     public void should_add_new_rsEvent_when_user_exists() throws Exception {
-        String jsonString = "{\"eventName\":\"特朗普\",\"keyWord\":\"政治\",\"userId\": " + userDto.getId()+ " }";
+        String jsonString = "{\"eventName\":\"hello\",\"keyWord\":\"h\",\"userId\": " + userPo.getId()+ " }";
         mockMvc.perform(post("/rs/rsEvent").content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
@@ -116,7 +101,7 @@ class RsListApplicationTests {
     @Test
     public void should_show_all_users() throws Exception {
         mockMvc.perform(get("/users"))
-                .andExpect(jsonPath("$[0].userName", is("ann")))
+                .andExpect(jsonPath("$[0].userName", is("hehe")))
                 .andExpect(jsonPath("$[0].gender", is("female")))
                 .andExpect(jsonPath("$[0].email", is("a@b.com")))
                 .andExpect(jsonPath("$[0].phone", is("18888888888")))
@@ -127,53 +112,53 @@ class RsListApplicationTests {
 
     @Test
     public void should_update_rsEvent_when_rsEventId_match_userId() throws Exception {
-        RsEventDto oldRsEventDto = rsEventRepository.save(RsEventDto.builder().eventName("猪肉")
-                .keyword("经济").userDto(userDto).build());
-        String jsonString = "{\"eventName\":\"乘风破浪\",\"keyWord\":\"娱乐\",\"userId\": " + userDto.getId() + "}";
-        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventDto.getId()))
+        RsEventPo oldRsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("a")
+                .keyword("k").userPo(userPo).build());
+        String jsonString = "{\"eventName\":\"a2\",\"keyWord\":\"k2\",\"userId\": " + userPo.getId() + "}";
+        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventPo.getId()))
                 .content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        RsEventDto newRsEvent = rsEventRepository.findById(oldRsEventDto.getId()).get();
-        assertEquals("乘风破浪", newRsEvent.getEventName());
-        assertEquals("娱乐", newRsEvent.getKeyword());
+        RsEventPo newRsEvent = rsEventRepository.findById(oldRsEventPo.getId()).get();
+        assertEquals("a2", newRsEvent.getEventName());
+        assertEquals("k2", newRsEvent.getKeyword());
 
 
     }
 
     @Test
     public void should_throw_exception_when_userId_null() throws Exception {
-        RsEventDto oldRsEventDto = rsEventRepository.save(RsEventDto.builder().eventName("猪肉")
-                .keyword("经济").userDto(userDto).build());
-        String jsonString = "{\"eventName\":\"乘风破浪\",\"keyWord\":\"娱乐\",\"userId\": }";
-        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventDto.getId()))
+        RsEventPo oldRsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("abc")
+                .keyword("d").userPo(userPo).build());
+        String jsonString = "{\"eventName\":\"a\",\"keyWord\":\"k\",\"userId\": }";
+        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventPo.getId()))
                 .content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     public void should_update_rsEvent_when_only_eventName() throws Exception {
-        RsEventDto oldRsEventDto = rsEventRepository.save(RsEventDto.builder().eventName("猪肉")
-                .keyword("经济").userDto(userDto).build());
-        String jsonString = "{\"eventName\":\"乘风破浪\",\"keyWord\":null,\"userId\": " + userDto.getId() + "}";
-        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventDto.getId()))
+        RsEventPo oldRsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("abc")
+                .keyword("d").userPo(userPo).build());
+        String jsonString = "{\"eventName\":\"a\",\"keyWord\":null,\"userId\": " + userPo.getId() + "}";
+        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventPo.getId()))
                 .content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        RsEventDto newRsEvent = rsEventRepository.findById(oldRsEventDto.getId()).get();
-        assertEquals("乘风破浪", newRsEvent.getEventName());
-        assertEquals("经济", newRsEvent.getKeyword());
+        RsEventPo newRsEvent = rsEventRepository.findById(oldRsEventPo.getId()).get();
+        assertEquals("a", newRsEvent.getEventName());
+        assertEquals("d", newRsEvent.getKeyword());
     }
 
     @Test
     public void should_update_rsEvent_when_only_keyword() throws Exception {
-        RsEventDto oldRsEventDto = rsEventRepository.save(RsEventDto.builder().eventName("猪肉")
-                .keyword("经济").userDto(userDto).build());
-        String jsonString = "{\"eventName\":null,\"keyWord\":\"娱乐\",\"userId\": " + userDto.getId() + "}";
-        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventDto.getId()))
+        RsEventPo oldRsEventPo = rsEventRepository.save(RsEventPo.builder().eventName("a")
+                .keyword("b").userPo(userPo).build());
+        String jsonString = "{\"eventName\":null,\"keyWord\":\"c\",\"userId\": " + userPo.getId() + "}";
+        mockMvc.perform(patch("/rs/{rsEventId}",String.valueOf(oldRsEventPo.getId()))
                 .content(jsonString).contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        RsEventDto newRsEvent = rsEventRepository.findById(oldRsEventDto.getId()).get();
-        assertEquals("猪肉", newRsEvent.getEventName());
-        assertEquals("娱乐", newRsEvent.getKeyword());
+        RsEventPo newRsEvent = rsEventRepository.findById(oldRsEventPo.getId()).get();
+        assertEquals("a", newRsEvent.getEventName());
+        assertEquals("c", newRsEvent.getKeyword());
     }
 
 }

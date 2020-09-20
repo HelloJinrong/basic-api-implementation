@@ -1,7 +1,6 @@
-package com.thoughtworks.rslist.dto;
+package com.thoughtworks.rslist.Po;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.thoughtworks.rslist.domain.RsEvent;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,7 +14,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "rsEvent")
-public class RsEventDto {
+public class RsEventPo {
     @Id
     @GeneratedValue
     private int id;
@@ -23,7 +22,8 @@ public class RsEventDto {
     private String keyword;
     private int voteNum;
 
-    @JsonIgnore
+
     @ManyToOne
-    private UserDto userDto;
+    @JsonIgnore
+    private UserPo userPo;
 }
