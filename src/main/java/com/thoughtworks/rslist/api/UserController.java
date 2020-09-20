@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-public class userController {
+public class UserController {
     List<User> userList = new ArrayList<>();
     @Autowired
     UserRepository userRepository;
